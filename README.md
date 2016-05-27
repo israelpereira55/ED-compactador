@@ -1,1 +1,4 @@
-Compactador ED 2016;01
+Estrutura de Dados 2016/1
+
+Compactador e descompactador.
+

@@ -15,17 +15,31 @@ int* vet_inicializa() {
 
 int* arquivo_frequencia(char *nome) {
 
-	FILE* fp = (FILE*) fopen (nome, "r");
-	char c = fgetc(fp);
+	FILE* fp = (FILE*) fopen (nome, "r"); if ( fp == NULL) {printf("eh null"); return 0;}
+	char valor_asc = fgetc(fp);
 
 	int *v = vet_inicializa();
-	int valor_asc = -1;
 
-	while (c != EOF) { //Testar se o acesso no vetor usando o indice c funciona.
-		valor_asc = c;
-		v[valor_asc]++;
-		c = fgetc(c);
+	while (valor_asc != EOF) {
+		v[valor_asc]++; //Mesmo declarado como char, o conteudo que "valor_asc" carrega também é inteiro. Assim o acesso no vetor funciona da mesma forma que uma variavel declarada como int.
+		valor_asc = fgetc(fp);
+	}
+	
+	fclose(fp);
+	
+	return v;
+}
+
+void vet_imprime(int *v) {
+	int i, j;
+
+	for(i=0, j= 0; i < 256; i++, j++) {
+		printf("%d ", v[i]);
+
+		if (j%20 == 0) {
+			printf("\n");
+		}
 	}
 
-	return v;
+	return;
 }

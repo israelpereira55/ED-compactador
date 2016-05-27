@@ -1,7 +1,12 @@
+#include <stdlib.h>
+#include <stdio.h>
+
+#include "arvore.h"
+
 struct arv {
 	char c;
-	Arv* esq,
-	     dir;
+	Arv *esq,
+	     *dir;
 };
 
 Arv* arv_inicializa_unica(char c) {
@@ -13,18 +18,19 @@ Arv* arv_inicializa_unica(char c) {
 	return a;
 }
 
-Arv* arv_inicializa(Arv* esq, Arv* dir) {
+Arv* arv_inicializa(char c, Arv* esq, Arv* dir) {
 	
 	Arv* a = (Arv*) malloc (sizeof(Arv));
 	a->esq = esq;
 	a->dir = dir;
+	a->c = c;
 	return a;
 }
 
-Arv* arv_retorna_pai (Arv* a, char c) {
+Arv* arv_pai (Arv* a, char c) {
 
 	if ( !arv_pertence(a, c) ) {
-		return ;
+		return NULL;
 	}
 
 	//No teste acima já sabemos que nossa arvore não está vazia caso as instruções abaixo forem executadas, então, o teste a == null não é necessário.
@@ -41,15 +47,16 @@ Arv* arv_retorna_pai (Arv* a, char c) {
 		}
 	}
 
-	Arv* teste = arv_retorna_pai(a->esq, c);
+	Arv* teste = arv_pai(a->esq, c);
 
 	if (teste != NULL) {
 		return teste;
 	}
 
-	return arv_retorna_pai(a->dir);
+	return arv_pai(a->dir, c);
 }
-Arv* arv_pertence (Arv* a, char c) {
+
+int arv_pertence (Arv* a, char c) {
 	
 	if(a == NULL) {
 		return 0;
@@ -59,7 +66,7 @@ Arv* arv_pertence (Arv* a, char c) {
 		return 1;
 	}
 
-	return arv_pertence(a->esq) || arv_pertence(a->dir);
+	return arv_pertence(a->esq, c) || arv_pertence(a->dir, c);
 }
 
 Arv* arv_retira (Arv* a, char c) {
@@ -68,19 +75,21 @@ Arv* arv_retira (Arv* a, char c) {
 		return NULL;
 	}
 
-	Arv *pai = arv_retorna_pai(a, c);
+	Arv *pai = arv_pai(a, c);
 
-	if (pai->esq->c == c) {
-		Arv* filho = pai->esq;
-		pai->esq = NULL;
-		return filho;
+	if (pai->esq != NULL) {
+		if (pai->esq->c == c) {
+			Arv* filho = pai->esq;
+			pai->esq = NULL;
+			return filho;
+		}
 	}
 
 	Arv* filho = pai->dir;
 	pai->dir = NULL;
 	return filho;
 }
-
+/*
 Arv* arv_busca(Arv* a, char c) {
 
 	if (a == NULL) {
@@ -89,7 +98,7 @@ Arv* arv_busca(Arv* a, char c) {
 
 	if(a->c == c) {
 		return a;
-	}
+	}*/
 
 Arv* arv_libera(Arv* a) {
 	
@@ -107,4 +116,8 @@ Arv* arv_libera(Arv* a) {
 
 	free(a);
 	return NULL;
-}	
+}
+
+char info (Arv* a) { //Cuidado com falhas seg.
+	return a->c;
+}

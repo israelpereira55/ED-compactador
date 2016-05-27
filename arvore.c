@@ -1,5 +1,4 @@
 struct arv {
-//	Item* item;
 	Arv* esq,
 	     dir;
 };

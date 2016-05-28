@@ -8,7 +8,8 @@ struct arv {
 	int peso;
 	Arv *esq,
 	     *dir,
-	     *prox;
+	     *prox,
+	     *ant;
 };
 
 Arv* arv_inicializa_unica(char c) {
@@ -27,6 +28,7 @@ Arv* arv_inicializa(char c, Arv* esq, Arv* dir) {
 	a->esq = esq;
 	a->dir = dir;
 	a->prox = NULL;
+	a->ant = NULL;
 	
 	a->peso = 0;
 	a->c = c;
@@ -39,10 +41,24 @@ Arv* arv_inicializa_huffman(int i, Arv* esq, Arv* dir) {
 	a->esq = esq;
 	a->dir = dir;
 	a->prox = NULL;
+	a->ant = NULL;
 	
 	a->peso = i;
-	a->c = "q";
+	a->c = 'q'; //Apenas evitando um aviso de erro no valgrind. Só serão acessados os caracteres das folhas.
 	return a;
+}
+
+int arv_pertence (Arv* a, char c) {
+	
+	if(a == NULL) {
+		return 0;
+	}
+
+	if (a->c == c) {
+		return 1;
+	}
+
+	return arv_pertence(a->esq, c) || arv_pertence(a->dir, c);
 }
 
 Arv* arv_pai (Arv* a, char c) {
@@ -74,19 +90,6 @@ Arv* arv_pai (Arv* a, char c) {
 	return arv_pai(a->dir, c);
 }
 
-int arv_pertence (Arv* a, char c) {
-	
-	if(a == NULL) {
-		return 0;
-	}
-
-	if (a->c == c) {
-		return 1;
-	}
-
-	return arv_pertence(a->esq, c) || arv_pertence(a->dir, c);
-}
-
 Arv* arv_retira (Arv* a, char c) {
 	
 	if( !arv_pertence(a, c) ) {
@@ -99,12 +102,15 @@ Arv* arv_retira (Arv* a, char c) {
 		if (pai->esq->c == c) {
 			Arv* filho = pai->esq;
 			pai->esq = NULL;
+			
+			filho->ant = NULL;
 			return filho;
 		}
 	}
 
 	Arv* filho = pai->dir;
 	pai->dir = NULL;
+	filho->ant = NULL;
 	return filho;
 }
 /*
@@ -140,6 +146,51 @@ char info (Arv* a) { //Cuidado com falhas seg.
 	return a->c;
 }
 
+Arv* arv_troca(Arv* a) {//Pega a primeira árvore da lista e troca de posição com a segunda, respeitando o encadeamento da lista.
+			//Lembrar que para usar esse funcao, a lista precisa ter pelo menos duas arvores.
+			//Se a for a primeira árvore da lista, o cliente precisará atualizar seu ponteiro com o retorno desta função, senão, não é necessário.
+/*
+	if (a == NULL) {
+		return NULL;
+	}
+	
+	if (a->prox == NULL) {
+		return a;
+	}
+	
+	Arv* troca = a->prox; 
+				//Caso geral
+	
+	troca->ant = a->ant;
+	a->ant->prox = troca;
+	
+	a->prox = troca->prox;
+	
+	troca->prox = a;
+	a->ant = troca;                                                                                                                            
+	
+	a->prox = troca->prox;
+	troca->prox = a;
+	a->prox->ant = a;*/
+	
+	Arv* troca = a->prox; //Contempla o caso geral e os casos de contorno
+	
+	if(a->ant != NULL) {
+		a->ant->prox = troca;
+	}
+	
+	if (troca->prox != NULL) {
+		troca->prox->ant = a;
+	}
+	
+	a->prox = troca->prox;
+	troca->ant = a->ant;
+	troca->prox = a;
+	a->ant = troca;
+	
+	return troca;
+}
+/*
 Arv* arv_ordena(Arv* a) {
 
 	Arv *aux = a;
@@ -159,33 +210,47 @@ Arv* arv_ordena(Arv* a) {
 	}
 	
 	return aux;
-}
-				
-Arv* arv_troca(Arv* a) { //Lembrar que para usar esse funcao, a lista precisa ter pelo menos duas arvores.
-/*
-	if (a == NULL) {
+}*/
+
+Arv* arv_ordena(Arv* a) { //Algorítmo: Primeiro loop: Passar todos os maiores para a direita, começando do início da lista para o final. 
+			  //		Segundo loop: Passar todos os menores para a esquerda, começando do final da lista para o início.
+
+	Arv *aux = a;
+	Arv *troca = NULL;
+
+	if(a == NULL) {
 		return NULL;
 	}
 	
-	if (a->prox == NULL) {
-		return a;
-	}*/
+	while (aux->prox != NULL) {
+		if (aux->peso > aux->prox->peso) {
+		
+			if (a->ant == NULL) {
+				a = arv_troca(a);
+			} else {
+				arv_troca(a);
+			}
+		}
+		aux = aux->prox;
+	}
 	
-	Arv* troca = a->prox;
+	//Aqui aux->prox é NULL.
+	while (aux->ant != NULL) { 
+		if (aux->peso < aux->ant->peso) {
+			arv_troca(a);
+		}
+		aux = aux->ant;
+	}
 	
-	a->prox = troca->prox;
-	troca->prox = a;
-	
-	return troca;
-}
+	return aux;
+}			
 
 Arv* arv_insere (Arv* original, Arv* adicional) { //A árvore adicional será inserida no final da ávore original.
 						  //original e adicional nao podem ser NULL. TESTAR COMO VOID
 	Arv* aux = original;
 	
-	if(aux->prox == NULL) {
-		aux->prox = adicional;
-		return original;
+	if(aux == NULL) {
+		return adicional;
 	}
 	
 	while(aux->prox != NULL) { //da p descer um nivel
@@ -193,6 +258,7 @@ Arv* arv_insere (Arv* original, Arv* adicional) { //A árvore adicional será in
 	}
 	
 	aux->prox = adicional;
+	adicional->ant = aux;
 	return original;
 }
 	
@@ -205,11 +271,11 @@ Arv* arv_huffman (Arv* lista) {
 
 	while (lista->prox != NULL) {
 		esq = lista;
-		lista = a->prox;
+		lista = lista->prox;
 		esq->prox = NULL;
 		
 		dir = lista;
-		lista = a->prox->prox;
+		lista = lista->prox;
 		dir->prox = NULL;
 		
 		Tr =  arv_inicializa_huffman(esq->peso + dir->peso, esq, dir);
@@ -219,9 +285,26 @@ Arv* arv_huffman (Arv* lista) {
 	return lista;
 }
 
+Arv* arv_cria_lista_frequencia (int* freq) { //Cria uma lista de árvore contendo apenas raízes com itens sendo a frequencia dado o vetor freq.
+	int i;
+	Arv* lista = NULL;
+		
+	for(i=0; i<256; i++) {
+		if (freq[i] != 0) {
+			lista = arv_insere (lista, arv_inicializa_huffman(freq[i], NULL, NULL) ); // Cria uma árvore contendo só a raiz com o valor da frequencia sendo o item e insere na lista.
+		}
+	}
 
+	return lista;
+}
 
+void arv_imprime_lista (Arv* lista) {
+	Arv* aux = lista;
 
-
-
-
+	while(aux != NULL) {
+		printf("%d ", aux->peso);
+		aux = aux->prox;
+	}
+	
+	return;
+}

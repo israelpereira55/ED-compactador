@@ -15,7 +15,7 @@ int* vet_inicializa() {
 
 int* arquivo_frequencia(char *nome) {
 
-	FILE* fp = (FILE*) fopen (nome, "r"); if ( fp == NULL) {printf("eh null"); return 0;}
+	FILE* fp = (FILE*) fopen (nome, "r");
 	char valor_asc = fgetc(fp);
 
 	int *v = vet_inicializa();

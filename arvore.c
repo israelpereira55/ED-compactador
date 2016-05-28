@@ -204,15 +204,6 @@ Arv* arv_huffman (Arv* lista) {
 	Arv *Tr = NULL;
 
 	while (lista->prox != NULL) {
-	
-//		if (lista->peso > lista->prox->peso) {
-//			troca = lista->prox;
-//			lista->prox = lista->prox->prox;
-//			troca->prox = lista;
-			
-//			lista = arv_troca(lista);
-//		}
-		
 		esq = lista;
 		lista = a->prox;
 		esq->prox = NULL;

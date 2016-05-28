@@ -185,10 +185,10 @@ Arv* arv_insere (Arv* original, Arv* adicional) { //A árvore adicional será in
 	
 	if(aux->prox == NULL) {
 		aux->prox = adicional;
-		return aux;
+		return original;
 	}
 	
-	while(aux->prox != NULL) {
+	while(aux->prox != NULL) { //da p descer um nivel
 		aux = aux->prox;
 	}
 	
@@ -205,13 +205,13 @@ Arv* arv_huffman (Arv* lista) {
 
 	while (lista->prox != NULL) {
 	
-		if (lista->peso > lista->prox->peso) {
+//		if (lista->peso > lista->prox->peso) {
 //			troca = lista->prox;
 //			lista->prox = lista->prox->prox;
 //			troca->prox = lista;
 			
-			lista = arv_troca(lista);
-		}
+//			lista = arv_troca(lista);
+//		}
 		
 		esq = lista;
 		lista = a->prox;
@@ -224,6 +224,9 @@ Arv* arv_huffman (Arv* lista) {
 		Tr =  arv_inicializa_huffman(esq->peso + dir->peso, esq, dir);
 		lista = arv_insere(lista, Tr);
 	}
+
+	return lista;
+}
 
 
 

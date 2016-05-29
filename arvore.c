@@ -214,7 +214,51 @@ Arv* arv_ordena(Arv* a) {
 
 Arv* arv_ordena(Arv* a) { //Algorítmo: Primeiro loop: Passar todos os maiores para a direita, começando do início da lista para o final. 
 			  //		Segundo loop: Passar todos os menores para a esquerda, começando do final da lista para o início.
+			  //Após a ordenação a lista o cliente deve colocar a lista original para que o ponteiro seja atualizado.
 
+	Arv *aux = a;
+
+	if(a == NULL) {
+		return NULL;
+	}
+	
+	while (aux->prox != NULL) {
+		if (aux->peso > aux->prox->peso) {
+		
+			if (aux->ant == NULL) {
+				a = arv_troca(aux);
+			} else {
+				arv_troca(aux);
+			}
+			
+		} else {
+			aux = aux->prox;
+		}
+	}
+	
+	//Aqui aux->prox é NULL.
+	while (aux->ant != NULL) { 
+		if (aux->peso < aux->ant->peso) {
+		
+			if (aux->ant->ant == NULL) {
+				a = arv_troca(aux->ant);
+			} else {
+				arv_troca(aux->ant);
+			}
+			
+		} else {
+			aux = aux->ant;
+		}
+	}
+	return a;
+}	
+
+
+
+/*
+Arv* arv_ordena(Arv* a) { //Algorítmo: Primeiro loop: Passar todos os maiores para a direita, começando do início da lista para o final. 
+			  //		Segundo loop: Passar todos os menores para a esquerda, começando do final da lista para o início.
+                          //Após a ordenação a lista o cliente deve colocar a lista original para que o ponteiro seja atualizado.
 	Arv *aux = a;
 	Arv *troca = NULL;
 
@@ -225,25 +269,32 @@ Arv* arv_ordena(Arv* a) { //Algorítmo: Primeiro loop: Passar todos os maiores p
 	while (aux->prox != NULL) {
 		if (aux->peso > aux->prox->peso) {
 		
-			if (a->ant == NULL) {
-				a = arv_troca(a);
+			if (aux->ant == NULL) {
+				a = arv_troca(aux);
 			} else {
-				arv_troca(a);
+				  arv_troca(aux);
 			}
-		}
-		aux = aux->prox;
+		} else {
+		aux = aux->prox;}
 	}
 	
 	//Aqui aux->prox é NULL.
 	while (aux->ant != NULL) { 
 		if (aux->peso < aux->ant->peso) {
-			arv_troca(a);
-		}
-		aux = aux->ant;
-	}
+                    if (aux->ant->ant == NULL) {
+                        a = arv_troca(aux->ant);
+                    } else {
+			arv_troca(aux->ant);
+                    }
+                } else{
+                aux = aux->ant;
+                }
+        }
 	
-	return aux;
-}			
+	return a;
+}*/
+
+		
 
 Arv* arv_insere (Arv* original, Arv* adicional) { //A árvore adicional será inserida no final da ávore original.
 						  //original e adicional nao podem ser NULL. TESTAR COMO VOID
@@ -253,7 +304,7 @@ Arv* arv_insere (Arv* original, Arv* adicional) { //A árvore adicional será in
 		return adicional;
 	}
 	
-	while(aux->prox != NULL) { //da p descer um nivel
+	while(aux->prox != NULL) {
 		aux = aux->prox;
 	}
 	
@@ -272,14 +323,26 @@ Arv* arv_huffman (Arv* lista) {
 	while (lista->prox != NULL) {
 		esq = lista;
 		lista = lista->prox;
+		lista->ant = NULL;
 		esq->prox = NULL;
 		
 		dir = lista;
 		lista = lista->prox;
+		if(lista != NULL) {
+			lista->ant = NULL;
+		}
 		dir->prox = NULL;
 		
+		printf("p:%d\n", esq->peso + dir->peso);
 		Tr =  arv_inicializa_huffman(esq->peso + dir->peso, esq, dir);
-		lista = arv_insere(lista, Tr);
+		
+//		if(esq->peso + dir->peso > lista-> peso) {
+			lista = arv_insere(lista, Tr); //Insere no Tr no final da lista.
+			lista = arv_ordena(lista); //Provavelmente há como inserir o elemento de maneira já ordenada não precisando rodar esse algorítmo.
+//		} else {
+//			Tr->prox = lista;
+//			lista->ant = Tr;
+//		}
 	}
 
 	return lista;

@@ -12,6 +12,13 @@ struct arv {
 	     *ant;
 };
 
+//typedef struct vet_caminho VCaminho; //Estará comentado só até finalizar o teste.
+
+struct vet_caminho{
+	int *v;
+	int n;
+};
+
 Arv* arv_inicializa_unica(char c) {
 	
 	Arv* a = (Arv*) malloc (sizeof(Arv));
@@ -63,7 +70,7 @@ int arv_pertence (Arv* a, char c) {
 
 Arv* arv_pai (Arv* a, char c) {
 
-	if ( !arv_pertence(a, c) ) {
+	if ( !arv_pertence(a, c) || a->c == c ) {
 		return NULL;
 	}
 
@@ -371,3 +378,65 @@ void arv_imprime_lista (Arv* lista) {
 	
 	return;
 }
+
+int arv_elem_profundidade(Arv* a, char c) { //Necessário que c pertença a árvore.
+	
+	Arv *pai = arv_pai(a, c);
+	
+	if(pai == NULL) {
+		return 0;
+	}
+	
+	return 1 + arv_elem_profundidade(a, pai->c);
+}
+
+VCaminho* vcaminho_inicializa(int n) {
+	VCaminho *vc = (VCaminho*) malloc (sizeof(VCaminho));
+	
+	vc->v = (int*) malloc (n * sizeof(int));
+	vc->n = n;
+	return vc;
+}
+
+VCaminho* vcaminho_retorna_caminho(Arv *a, char c) { // Necessário que c pertença a árvore.
+						     // Int só até aprender a manipular bitmap, depois retornar bitmap.
+	int profundidade = arv_elem_profundidade(a, c);
+	VCaminho *vc = vcaminho_inicializa(profundidade);
+	
+	Arv *pai = arv_pai (a, c);
+	char elem = c;
+	
+	while (profundidade > 0) {
+	
+		if (pai->esq != NULL) {
+		
+			if (pai->esq->c == elem) {
+				vc->v[profundidade-1] = 0;
+			} else {
+				vc->v[profundidade-1] = 1;
+			}
+			
+		} else {
+			vc->v[profundidade-1] = 1;
+		}
+		
+		elem = pai->c;
+		pai = arv_pai (a, pai->c);
+		profundidade--;
+	}
+	
+	return vc;
+}
+
+void vcaminho_imprime(VCaminho *vc) {
+	int i;
+	
+	for (i=0; i<vc->n; i++) {
+		printf("%d ", vc->v[i]);
+	}
+	return;
+} 
+	
+	
+	
+	

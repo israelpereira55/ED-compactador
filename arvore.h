@@ -43,4 +43,20 @@ VCaminho* vcaminho_retorna_caminho(Arv *a, char c); //Ficará aqui apenas para t
 
 void vcaminho_imprime(VCaminho *vc); //Ficará aqui apenas para teste
 
+Arv* arv_folhas (Arv* original, Arv* percorre, Arv* folhas);
+
+VCaminho* arv_retorna_vcaminho(Arv* a); // So para teste, provavelmente
+
+Arv* arv_prox (Arv *a); //Absolutamente só para testes
+
+VCaminho* vcaminho_escreve_chap (VCaminho *vc);
+
+void serializacao (FILE *compactado, Arv* otima);
+
+void serializacao_folhas (FILE *compactado, Arv* folhas);
+
+int arv_tam (Arv *a);
+
+VCaminho* percorre (Arv* a, VCaminho *vc);
+
 #endif 

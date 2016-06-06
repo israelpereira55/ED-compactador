@@ -20,7 +20,7 @@ int main()
 		    )
 	);
 
-	
+	/*
 //     arv_imprime(a);
      
      // Verificia se o caracter 'b' pertence a arvore
@@ -45,7 +45,7 @@ int main()
      
      Arv* retirada3 = arv_retira(a, 'd');
      printf ("Retirada: %c \n", info(retirada3));
-
+*/
      // retorna o numero de folhas da arvore (3)
 //     int f = folhas(a);
  //    printf ("Numero de folhas da arvore: %d \n", f);
@@ -54,6 +54,56 @@ int main()
  //    int i = ocorrencias (a, 'f');
 //     printf ("Numero de ocorrencias de f: %d \n", i);
 
-     arv_libera (a);
+//	Arv* folhas1 = arv_inicializa_unica( 'a');
+/*	Arv* folhas2 =arv_inicializa_unica('b');
+	Arv* folhas3 = arv_inicializa_unica('c');
+	Arv* folhas4 = arv_inicializa_unica( 'd');
+	Arv* folhas5 = arv_inicializa_unica( 'e');
+	Arv* folhas6 = arv_inicializa_unica('f');
+	Arv *lista = NULL;
+	lista = arv_insere (lista,  folhas1);
+	lista = arv_insere (lista, folhas2);
+	lista = arv_insere (lista, folhas3);
+	lista = arv_insere (lista, folhas4);
+lista =	arv_insere (lista,  folhas5);
+	lista = arv_insere (lista, folhas6);
+	*/
+//	arv_imprime_lista (lista);
+//	Arv* folhas = NULL;
+//	folhas = arv_folhas (a, a, folhas);
+/*	arv_imprime_lista (folhas);
+	
+	VCaminho *cam = arv_retorna_vcaminho(folhas);
+	vcaminho_imprime(cam);
+	
+	printf("\n\n");
+	
+	folhas = arv_prox (folhas);
+	cam = arv_retorna_vcaminho(folhas);
+	vcaminho_imprime(cam);
+	
+	printf("\n\n");
+	
+	folhas = arv_prox (folhas);
+	cam = arv_retorna_vcaminho(folhas);
+	vcaminho_imprime(cam);*/
+	
+//	FILE *fp = fopen("comp.comp", "w");
+	
+	//serializacao_folhas (fp, folhas);
+	
+	int x = arv_tam (a);
+	printf("aaaaaa  %d\n\n", x);
+	
+	VCaminho *vc = vcaminho_inicializa(9);
+	
+	percorre (a, vc);
+	vcaminho_imprime(vc);
+	
+	return 0;
+	
+	
+
+ //    arv_libera (a);
 
 }
